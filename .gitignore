@@ -1,0 +1,25 @@
+# 构建 / 编译产物
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+
+# 可执行文件（上游网关与本项目打包产物均不入库）
+*.exe
+
+# 日志与调试
+*.log
+shim_trace.log
+shim_debug.on
+
+# 密钥与本地配置（含敏感信息，绝不入库）
+config.json
+config.json.bak*
+config.json.models.*.json
+.credentials.txt
+gui_settings.json
+
+# 临时文件
+_tmp/
+*.bak
