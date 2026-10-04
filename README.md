@@ -28,13 +28,19 @@
 ## 目录结构
 
 ```
-opencode2api-console/
+opencode2api-console/        # Git 仓库（纯源码 + 脚本，不含 exe）
 ├── LICENSE
 ├── README.md
 ├── .gitignore
 ├── opencode2api_gui.py   # 图形控制台（入口）
 ├── codex_shim.py         # codex 协议适配器
-└── wb_shim.py            # WorkBuddy 中继层
+├── wb_shim.py            # WorkBuddy 中继层
+├── download_gateway.ps1  # 一键从上游拉取网关 exe 到本目录
+└── start_console.bat     # 启动入口（检查网关/控制台是否齐备）
+
+# Release 资产（*-windows-amd64.zip）额外包含：
+#   o2a_console.exe        # 控制台编译产物（PyInstaller 冻结）
+#   （下载脚本会把官方 opencode2api.exe 放进同目录）
 ```
 
 ## 依赖
@@ -53,16 +59,50 @@ opencode2api-console/
 pip install pillow pystray
 ```
 
-## 使用步骤
+## 从 Release 下载即用（推荐 Windows 用户）
 
-1. **获取网关**：前往上游仓库 Releases 下载 `opencode2api.exe`，或按上游说明 `go build` 自行编译。把它放到本仓库同级或任意目录。
-2. **准备配置**：使用上游仓库自带的 `config.example.json` 复制为 `config.json` 并按需填写（`server_keys`、上游 `zen`/`go` 密钥或 `anonymous:true`、`webui.password` 等）。**注意：`config.json` 含密钥，已被 `.gitignore` 排除，不会进入本仓库。**
+GitHub Releases 提供开箱即用的打包（`<版本>-windows-amd64.zip`），已包含：
+
+- 本控制台编译好的 `o2a_console.exe`
+- `download_gateway.ps1`（一键拉取上游网关）
+- `start_console.bat`（启动入口）
+- 全部 Python 源码与 `LICENSE` / `README`
+
+使用步骤：
+
+1. 从 [Releases](https://github.com/puppywxz-hash/opencode2api-console/releases) 下载最新的 `*-windows-amd64.zip` 并解压到任意目录。
+2. 在解压目录里运行一次下载脚本，把官方网关拉到本地（**仅下载官方二进制，本仓库不分发它**）：
+   ```bat
+   powershell -ExecutionPolicy Bypass -File download_gateway.ps1
+   ```
+3. 双击 `start_console.bat` 启动控制台（首次若缺网关会提示，先完成第 2 步即可）。
+4. 在控制台「密钥」页填写 `server_keys`（客户端 → 本机门禁）与上游 `zen_keys`（你的 opencode 账号 key），保存后点「启动代理」。
+
+> ⚠️ 网关 `opencode2api.exe` 必须和 `o2a_console.exe` **在同一目录**，控制台才能找到并启动它（`config.json` 也放在此目录；它含密钥，已被 `.gitignore` 排除，不会进入本仓库）。
+
+## 仅用源码（自行装依赖 / 自行构建）
+
+1. **获取网关**：前往上游仓库 Releases 下载 `opencode2api.exe`，或按上游说明 `go build` 自行编译；放到本仓库目录（与 `opencode2api_gui.py` **同目录**）。
+2. **安装依赖**：
+   ```bash
+   pip install pillow pystray
+   ```
 3. **运行控制台**：
    ```bash
    python opencode2api_gui.py
    ```
-   或在 GUI 中配置网关路径后点「启动」。
 4. **（可选）WorkBuddy 抗断流**：如需启用 `wb_shim` 中继层，按 `wb_shim.py` 顶部说明以独立进程启动，并把 WorkBuddy 的模型端点指向 shim 监听端口（默认 `127.0.0.1:18090`）。
+
+## 自行构建控制台 exe
+
+想自己从源码冻结出 `o2a_console.exe`（与 Release 中一致）：
+
+```bash
+pip install pillow pystray pyinstaller
+pyinstaller --noconfirm --onefile --windowed --name o2a_console opencode2api_gui.py
+```
+
+产物在 `dist/o2a_console.exe`。注意 `*.exe` 已被 `.gitignore` 排除，不会进入本仓库。
 
 ## 免责声明
 
