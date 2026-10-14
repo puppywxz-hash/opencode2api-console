@@ -8,17 +8,17 @@
     **不修改、不打包、不分发上游二进制**，完全符合上游未声明许可证的合规要求。
 
 .PARAMETER Version
-    上游 Release 版本号，默认 v1.3.5（与 README 保持一致，如需更新请改这里或传参）。
+    上游 Release 版本号，默认 v1.3.8（与 README 保持一致，如需更新请改这里或传参）。
 
 .PARAMETER Arch
     架构，默认 windows_amd64。其它可选：windows_arm64。
 
 .EXAMPLE
     powershell -ExecutionPolicy Bypass -File download_gateway.ps1
-    powershell -ExecutionPolicy Bypass -File download_gateway.ps1 -Version v1.3.5
+    powershell -ExecutionPolicy Bypass -File download_gateway.ps1 -Version v1.3.8
 #>
 param(
-    [string]$Version = "v1.3.5",
+    [string]$Version = "v1.3.8",
     [string]$Arch = "windows_amd64"
 )
 
